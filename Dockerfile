@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER Jan Nonnen <helvalius@gmail.com>
+MAINTAINER Jan Guth <jan.guth@gmail.com>
 
 RUN apt-get update
 
@@ -63,10 +63,14 @@ RUN service postgresql start && \
   sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data && \
   sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim"
 
-RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/europe/monaco-latest.osm.pbf
+# RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/europe/monaco-latest.osm.pbf
 # RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/europe/luxembourg-latest.osm.pbf
 # RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/north-america-latest.osm.pbf
 # RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/north-america/us/delaware-latest.osm.pbf
+# Full install ...
+RUN wget --output-document=/app/data.pbf http://download.bbbike.org/osm/planet/planet-latest.osm.pbf
+RUN wget --output-document=/app/data.pbf.md5 http://download.bbbike.org/osm/planet/planet-latest.osm.pbf.md5
+RUN md5sum --check /app/data.pbf.md5
 
 WORKDIR /app/nominatim
 
@@ -78,6 +82,10 @@ RUN ./utils/setup.php --help
 
 RUN service postgresql start && \
   sudo -u nominatim ./utils/setup.php --osm-file /app/data.pbf --all --threads 2
+
+# Add special phrases
+RUN sudo -u nominatim ./utils/specialphrases.php --countries | psql -d nominatim
+RUN sudo -u nominatim ./utils/specialphrases.php --wiki-import | psql -d nominatim
 
 
 RUN mkdir -p /var/www/nominatim
