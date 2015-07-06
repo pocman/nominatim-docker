@@ -71,8 +71,10 @@ RUN service postgresql start && \
 # RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/north-america-latest.osm.pbf
 # RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/north-america/us/delaware-latest.osm.pbf
 # Full install ...
-RUN wget --output-document=/app/data.pbf http://download.bbbike.org/osm/planet/planet-latest.osm.pbf
-RUN wget --output-document=/app/data.pbf.md5 http://download.bbbike.org/osm/planet/planet-latest.osm.pbf.md5
+RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/europe/france-latest.osm.pbf
+RUN wget --output-document=/app/data.pbf.md5 /app/data.pbf http://download.geofabrik.de/europe/france-latest.osm.pbf.md5
+#RUN wget --output-document=/app/data.pbf http://download.bbbike.org/osm/planet/planet-latest.osm.pbf
+#RUN wget --output-document=/app/data.pbf.md5 http://download.bbbike.org/osm/planet/planet-latest.osm.pbf.md5
 RUN md5sum --check /app/data.pbf.md5
 
 WORKDIR /app/nominatim
@@ -84,7 +86,7 @@ RUN ./utils/setup.php --help
 
 
 RUN service postgresql start && \
-  sudo -u nominatim ./utils/setup.php --osm-file /app/data.pbf --all --threads 2
+  sudo -u nominatim ./utils/setup.php --osm-file /app/data.pbf --all --threads 4
 
 # Add special phrases
 RUN sudo -u nominatim ./utils/specialphrases.php --countries | psql -d nominatim
