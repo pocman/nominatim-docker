@@ -71,8 +71,6 @@ RUN service postgresql start && \
 # RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/north-america/us/delaware-latest.osm.pbf
 # Full install ...
 RUN wget --output-document=/app/data.pbf http://download.geofabrik.de/europe/france-latest.osm.pbf
-RUN wget --output-document=/app/data.pbf.md5 http://download.geofabrik.de/europe/france-latest.osm.pbf.md5
-RUN md5sum --check /app/data.pbf.md5
 
 WORKDIR /app/nominatim
 
