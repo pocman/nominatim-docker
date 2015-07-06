@@ -52,6 +52,9 @@ RUN ./autogen.sh
 RUN ./configure
 RUN make
 
+Run sudo chown postgres /etc/ssl/private/ssl-cert-snakeoil.key
+Run sudo chown postgres /etc/ssl/certs/ssl-cert-snakeoil.pem
+
 # Configure postgresql
 RUN service postgresql start && \
   pg_dropcluster --stop 9.3 main
