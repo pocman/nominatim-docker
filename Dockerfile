@@ -45,10 +45,9 @@ RUN apt-get install -y sudo
 RUN pear install DB
 RUN useradd -m -p password1234 nominatim
 RUN mkdir -p /app/nominatim
-RUN git clone --recursive https://github.com/twain47/Nominatim.git /app/nominatim
-RUN cd /app/nominatim
-WORKDIR /app/nominatim
-RUN ./autogen.sh
+RUN wget http://www.nominatim.org/release/Nominatim-2.4.0.tar.bz2
+RUN tar --strip-components=1 -xvf Nominatim-2.4.0.tar.bz2
+RUN rm  Nominatim-2.4.0.tar.bz2
 RUN ./configure
 RUN make
 
